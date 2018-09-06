@@ -26,11 +26,13 @@ describe DockingStation do
         # curly braces kinda yields out/doesn't run right away until runs all of line
     #    expect { subject.release_bike }.to raise_error "No bikes!!!!!"
     #end
+    let(:bike) { double :bike }
 
     it "only allows ten bikes to be docked" do
+        allow(bike).to receive(:status)
         #subject.list_of_bikes > 10 and try to dock bike, return error
-        subject.DEFAULT_CAPACITY.times { |n| subject.dock(Bike.new) }
-        expect { subject.dock(Bike.new) }.to raise_error "Too many bikes!!!!!"
+        subject.DEFAULT_CAPACITY.times { |n| subject.dock(bike) }
+        expect { subject.dock(bike) }.to raise_error "Too many bikes!!!!!"
     end 
 
     it "when a dockingstation is created it accepts a default capacity parameter" do
@@ -39,7 +41,7 @@ describe DockingStation do
     end 
 
     it "updates bike working status when docked" do
-        bike = Bike.new
+        allow(bike).to receive(:status).and_return(false)
         subject.dock(bike, false)
         docked_bike = subject.list_of_bikes[0]
 
@@ -47,7 +49,7 @@ describe DockingStation do
     end
 
     it "doesn't release broken bikes" do
-      bike = Bike.new
+    allow(bike).to receive(:status).and_return(false)
       subject.dock(bike, false)
       expect{ subject.release_bike }.to raise_error "Can't release broken bikes!!!" # when that bike is broken
     end 

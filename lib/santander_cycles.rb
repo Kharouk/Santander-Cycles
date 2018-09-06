@@ -20,7 +20,9 @@ class DockingStation
 
     def dock(bike, status=bike.status)
         raise "Too many bikes!!!!!" if full?
-        bike.status = status
+        if status == true
+            bike.status = status
+        end
 
         @list_of_bikes << bike
     end
