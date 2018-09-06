@@ -3,24 +3,26 @@ puts "File is Loaded..."
 class DockingStation
     attr_reader :list_of_bikes, :DEFAULT_CAPACITY
 
-    def initialize
+    def initialize(capacity=20)
         @list_of_bikes = []
-        @DEFAULT_CAPACITY = 20
+        @working_bikes = []
+        @DEFAULT_CAPACITY = capacity
     end
     
 
     def release_bike
-
-        raise "No bikes!!!!!" if empty?
-        removed_bike = @list_of_bikes.sample
+        update_working_bikes
+        raise "Can't release broken bikes!!!" if empty?
+        removed_bike = @working_bikes.sample
         @list_of_bikes.delete(removed_bike)
         removed_bike
-
     end
 
-    def dock(bike)
-       raise "Too many bikes!!!!!" if full?
-       @list_of_bikes << bike
+    def dock(bike, status=bike.status)
+        raise "Too many bikes!!!!!" if full?
+        bike.status = status
+
+        @list_of_bikes << bike
     end
     
 
@@ -30,14 +32,23 @@ class DockingStation
     end
 
     def empty?
-        @list_of_bikes.empty?
+        @working_bikes.empty?
     end
 
+    def update_working_bikes
+        @working_bikes = @list_of_bikes.select { |bike| bike.status == true } 
+    end
 end
 
 class Bike
+    attr_accessor :status
+
+    def initialize
+    @status = true
+    end
+
     def working?
-        true 
+        @status 
     end
 end
 

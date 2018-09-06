@@ -22,14 +22,33 @@ describe DockingStation do
     #     expect(subject.bike).to eq bike
     # end
 
-    it 'raises an error when user removes bike when there is no bikes' do
+    #it 'raises an error when user removes bike when there is no bikes' do
         # curly braces kinda yields out/doesn't run right away until runs all of line
-        expect { subject.release_bike }.to raise_error "No bikes!!!!!"
-    end
+    #    expect { subject.release_bike }.to raise_error "No bikes!!!!!"
+    #end
 
     it "only allows ten bikes to be docked" do
         #subject.list_of_bikes > 10 and try to dock bike, return error
         subject.DEFAULT_CAPACITY.times { |n| subject.dock(Bike.new) }
         expect { subject.dock(Bike.new) }.to raise_error "Too many bikes!!!!!"
+    end 
+
+    it "when a dockingstation is created it accepts a default capacity parameter" do
+        station_23 = DockingStation.new(23)
+        expect(station_23.DEFAULT_CAPACITY).to eq 23
+    end 
+
+    it "updates bike working status when docked" do
+        bike = Bike.new
+        subject.dock(bike, false)
+        docked_bike = subject.list_of_bikes[0]
+
+        expect(docked_bike.status).to eq false
+    end
+
+    it "doesn't release broken bikes" do
+      bike = Bike.new
+      subject.dock(bike, false)
+      expect{ subject.release_bike }.to raise_error "Can't release broken bikes!!!" # when that bike is broken
     end 
 end
